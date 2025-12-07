@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ランダムサウンド再生システム (Configurable)</title>
+    <title>ランダムサウンド再生システム (Auto MP3)</title>
     <style>
         /* --- 基本的なスタイル設定 --- */
         body {
@@ -125,12 +125,10 @@
         .file-checkbox input { margin-right: 5px; }
         .file-checkbox.checked { background: #0056b3; }
 
-        /* タブ切り替え風表示 */
         details { margin-bottom: 10px; }
         summary { cursor: pointer; color: #aaa; font-size: 0.9rem; outline: none; }
         summary:hover { color: #fff; }
 
-        /* ユーティリティ */
         .row { display: flex; gap: 10px; }
         .col { flex: 1; }
         .hidden { display: none; }
@@ -214,10 +212,10 @@
                     <div class="list-container" id="fileListContainer">
                         </div>
                     <div class="row">
-                        <input type="text" id="newFileName" placeholder="例: bell.mp3">
+                        <input type="text" id="newFileName" placeholder="例: bell (.mp3は不要)">
                         <button class="btn-sm" id="addFileBtn" style="background:#28a745;">追加</button>
                     </div>
-                    <div class="small-note">※ soundフォルダに実際に存在するファイル名を入力してください。</div>
+                    <div class="small-note">※ 入力後、自動的に .mp3 が付与されます。</div>
                 </div>
             </details>
 
@@ -267,7 +265,6 @@
          * 📦 データ構造と初期設定
          * ============================================================
          */
-        // デフォルト設定
         const defaultData = {
             files: ["beep.mp3", "click.mp3", "wind.mp3", "water.mp3"],
             groups: [
@@ -277,14 +274,12 @@
             ]
         };
 
-        // 現在のシステムデータ
         let appData = { files: [], groups: [] };
 
         /* * ============================================================
          * 🔧 DOM要素
          * ============================================================
          */
-        // メインプレイヤー系
         const startBtn = document.getElementById('startBtn');
         const stopBtn = document.getElementById('stopBtn');
         const statusDisplay = document.getElementById('statusDisplay');
@@ -293,7 +288,6 @@
         const volumeRange = document.getElementById('volumeRange');
         const intervalRange = document.getElementById('intervalRange');
         
-        // 設定系
         const fileListContainer = document.getElementById('fileListContainer');
         const newFileNameInput = document.getElementById('newFileName');
         const addFileBtn = document.getElementById('addFileBtn');
@@ -309,49 +303,43 @@
         const exportBtn = document.getElementById('exportBtn');
         const importFile = document.getElementById('importFile');
 
-        // 確率系
         const initProbInput = document.getElementById('initProb');
         const stepProbInput = document.getElementById('stepProb');
         const multiProbInput = document.getElementById('multiProb');
         const probModeRadios = document.getElementsByName('probMode');
 
-        // システム変数
         let isRunning = false;
         let timerId = null;
         let currentProbability = 0;
         let lastPlayedFile = null;
 
         /* * ============================================================
-         * 💾 データのロード・保存 (Persistence)
+         * 💾 データのロード・保存
          * ============================================================
          */
-        
-        // 初期化：ローカルストレージから読み込み、なければデフォルト
         function initApp() {
             const savedData = localStorage.getItem('soundPlayerConfig');
             if (savedData) {
                 appData = JSON.parse(savedData);
             } else {
-                appData = JSON.parse(JSON.stringify(defaultData)); // Deep copy
+                appData = JSON.parse(JSON.stringify(defaultData)); 
             }
             refreshAllUI();
         }
 
-        // データをローカルストレージに保存
         function saveData() {
             localStorage.setItem('soundPlayerConfig', JSON.stringify(appData));
             refreshAllUI();
         }
 
-        // UI全体更新
         function refreshAllUI() {
             renderFileList();
             renderGroupSelects();
-            renderGroupEditor(); // 現在編集中のグループ情報を更新
+            renderGroupEditor();
         }
 
         /* * ============================================================
-         * 🖥️ UI操作ロジック (設定画面)
+         * 🖥️ UI操作ロジック
          * ============================================================
          */
 
@@ -370,18 +358,27 @@
         }
 
         addFileBtn.addEventListener('click', () => {
-            const name = newFileNameInput.value.trim();
-            if (name && !appData.files.includes(name)) {
+            let name = newFileNameInput.value.trim();
+            if (!name) return;
+
+            // 【追加機能】mp3拡張子の自動補完
+            if (!name.toLowerCase().endsWith('.mp3')) {
+                name += '.mp3';
+            }
+
+            if (!appData.files.includes(name)) {
                 appData.files.push(name);
                 newFileNameInput.value = '';
                 saveData();
+                // ユーザーへの通知も自動補完された名前で行う
                 alert(`「${name}」を追加しました。\nsoundフォルダにファイルを配置してください。`);
+            } else {
+                alert(`「${name}」は既に登録されています。`);
             }
         });
 
         window.removeFile = (index) => {
             if (confirm(`ファイル「${appData.files[index]}」をリストから削除しますか？`)) {
-                // グループからも削除
                 const fileName = appData.files[index];
                 appData.groups.forEach(g => {
                     g.files = g.files.filter(f => f !== fileName);
@@ -393,7 +390,6 @@
 
         // 2. グループ管理
         function renderGroupSelects() {
-            // メインプレイヤー用と編集用のセレクトボックスをリセット
             const currentMainVal = mainGroupSelect.value;
             const currentEditVal = editGroupSelect.value;
 
@@ -401,20 +397,17 @@
             editGroupSelect.innerHTML = '<option value="">-- グループを選択 --</option>';
 
             appData.groups.forEach((group, index) => {
-                // Main
                 const op1 = document.createElement('option');
                 op1.value = index;
                 op1.textContent = `${group.name} (${group.files.length}曲)`;
                 mainGroupSelect.appendChild(op1);
 
-                // Edit
                 const op2 = document.createElement('option');
                 op2.value = index;
                 op2.textContent = group.name;
                 editGroupSelect.appendChild(op2);
             });
 
-            // 選択状態の復元（削除されてなければ）
             if (currentMainVal && appData.groups[currentMainVal]) mainGroupSelect.value = currentMainVal;
             if (currentEditVal && appData.groups[currentEditVal]) editGroupSelect.value = currentEditVal;
         }
@@ -422,10 +415,9 @@
         createGroupBtn.addEventListener('click', () => {
             const name = newGroupNameInput.value.trim();
             if (name) {
-                appData.groups.push({ name: name, files: [] }); // 空グループ作成
+                appData.groups.push({ name: name, files: [] });
                 newGroupNameInput.value = '';
                 saveData();
-                // 新規グループを編集モードにする
                 editGroupSelect.value = appData.groups.length - 1;
                 renderGroupEditor();
             }
@@ -441,7 +433,6 @@
             }
         });
 
-        // グループ編集エリアの表示制御
         editGroupSelect.addEventListener('change', renderGroupEditor);
 
         function renderGroupEditor() {
@@ -455,7 +446,6 @@
             const targetGroup = appData.groups[idx];
             groupFileCheckboxes.innerHTML = '';
 
-            // 登録済み全ファイルについてチェックボックス生成
             appData.files.forEach(fileName => {
                 const label = document.createElement('label');
                 label.className = 'file-checkbox';
@@ -464,7 +454,6 @@
 
                 label.innerHTML = `<input type="checkbox" value="${fileName}" ${isChecked ? 'checked' : ''}> ${fileName}`;
                 
-                // デザイン用クリックイベント
                 label.querySelector('input').addEventListener('change', (e) => {
                     if (e.target.checked) label.classList.add('checked');
                     else label.classList.remove('checked');
@@ -478,7 +467,6 @@
             const idx = editGroupSelect.value;
             if (idx === "") return;
 
-            // チェックされているファイルを集める
             const checkboxes = groupFileCheckboxes.querySelectorAll('input[type="checkbox"]');
             const selectedFiles = [];
             checkboxes.forEach(cb => {
@@ -489,7 +477,6 @@
             saveData();
             alert("グループ内容を更新しました。");
         });
-
 
         // 3. 設定ファイル入出力
         exportBtn.addEventListener('click', () => {
@@ -521,17 +508,13 @@
                 }
             };
             reader.readAsText(file);
-            // reset input
             e.target.value = '';
         });
 
-
         /* * ============================================================
-         * ▶️ 再生プレイヤーロジック (既存ロジックの統合)
+         * ▶️ 再生プレイヤーロジック
          * ============================================================
          */
-
-        // UIイベント同期
         document.getElementById('volDisplay').textContent = (volumeRange.value * 100).toFixed(0) + "%";
         document.getElementById('intervalDisplay').textContent = intervalRange.value + "秒";
         
@@ -554,11 +537,9 @@
             });
         });
 
-        // 再生開始
         startBtn.addEventListener('click', () => {
             if (isRunning) return;
             
-            // 現在のグループにファイルがあるか確認
             const groupIdx = mainGroupSelect.value;
             const targetFiles = appData.groups[groupIdx]?.files;
 
@@ -628,7 +609,6 @@
             const useReduce = reduceRepeatCheck.checked;
 
             if (useReduce && lastPlayedFile && fileList.includes(lastPlayedFile) && fileList.length > 1) {
-                // 重み付け抽選
                 const weights = fileList.map(f => (f === lastPlayedFile) ? 0.5 : 1.0);
                 const totalW = weights.reduce((a, b) => a + b, 0);
                 let r = Math.random() * totalW;
@@ -661,9 +641,7 @@
             statusDisplay.textContent = msg;
         }
 
-        // 起動時実行
         initApp();
-
     </script>
 </body>
 </html>
