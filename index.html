@@ -636,7 +636,10 @@
             const groupIdx = mainGroupSelect.value;
             const fileList = appData.groups[groupIdx].files;
             
-            if (fileList.length === 0) return;
+            if (fileList.length === 0) {
+                if(onEndedCallback) onEndedCallback(); // ファイルがない場合は即次へ
+                return;
+            };
 
             let selectedFile;
             const useReduce = reduceRepeatCheck.checked;
@@ -663,7 +666,25 @@
 
             const audio = new Audio(`./sound/${selectedFile}`);
             audio.volume = parseFloat(volumeRange.value);
-            audio.play().catch(e => console.error("再生エラー:", e));
+            
+            audio.addEventListener('ended', () => {
+                if(onEndedCallback) onEndedCallback();
+            });
+
+            // エラー時の対策（ファイルがない場合など永遠に止まるのを防ぐ）
+            audio.addEventListener('error', (e) => {
+                console.error("再生エラー:", e);
+                updateStatus(`エラー: ${selectedFile} が見つかりません`);
+                // エラー時も少し待って次へ進める
+                setTimeout(() => {
+                    if(onEndedCallback) onEndedCallback();
+                }, 1000); 
+            });
+
+            audio.play().catch(e => {
+                console.error("再生開始エラー", e);
+                if(onEndedCallback) onEndedCallback();
+            });
         }
 
         function toggleButtons(running) {
