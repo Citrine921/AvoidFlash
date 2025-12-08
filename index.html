@@ -604,14 +604,18 @@
 
             const dice = Math.random() * 100;
             if (dice < currentProbability) {
-                playSound();
                 updateStatus("♪ 再生中 (判定停止)");
-                currentProbability = parseFloat(initProbInput.value);
-                
-                timerId = setTimeout(() => {
-                    updateStatus(`再開 (確率 ${currentProbability.toFixed(1)}%)`);
-                    processLoop();
-                }, 3000);
+                playSound(() => {
+                    // 再生終了後のコールバック
+                    if (!isRunning) return; // 停止されていたら何もしない
+                    currentProbability = parseFloat(initProbInput.value);
+                    
+                    // 少し間隔を空けて再開したい場合（例えば再生終了後1秒待つ）
+                    timerId = setTimeout(() => {
+                        updateStatus("判定再開");
+                        processLoop();
+                    }, 500); 
+                });
             } else {
                 increaseProbability();
                 updateStatus(`... (次: ${currentProbability.toFixed(1)}%)`);
