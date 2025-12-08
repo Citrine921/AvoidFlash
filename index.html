@@ -213,8 +213,11 @@
                         </div>
                     <div class="row">
                         <input type="text" id="newFileName" placeholder="例: bell (.mp3は不要)">
+                        <input type="file" id="filePicker" accept=".mp3" style="display:none;">
+                        <button class="btn-sm" id="browseBtn" style="background:#6c757d; width: 60px;" title="ファイルを選択して名前を入力">📂 参照</button>
                         <button class="btn-sm" id="addFileBtn" style="background:#28a745;">追加</button>
                     </div>
+                    <div class="small-note">※ 「参照」または入力後「追加」を押してください。ファイル自体は手動で sound フォルダに入れてください。</div>
                     <div class="small-note">※ 入力後、自動的に .mp3 が付与されます。</div>
                 </div>
             </details>
@@ -291,6 +294,8 @@
         const fileListContainer = document.getElementById('fileListContainer');
         const newFileNameInput = document.getElementById('newFileName');
         const addFileBtn = document.getElementById('addFileBtn');
+        const filePicker = document.getElementById('filePicker');
+        const browseBtn = document.getElementById('browseBtn');
         
         const editGroupSelect = document.getElementById('editGroupSelect');
         const newGroupNameInput = document.getElementById('newGroupName');
@@ -357,26 +362,7 @@
             });
         }
 
-        addFileBtn.addEventListener('click', () => {
-            let name = newFileNameInput.value.trim();
-            if (!name) return;
-
-            // mp3拡張子の自動補完
-            if (!name.toLowerCase().endsWith('.mp3')) {
-                name += '.mp3';
-            }
-
-            if (!appData.files.includes(name)) {
-                appData.files.push(name);
-                newFileNameInput.value = '';
-                saveData();
-                // ユーザーへの通知も自動補完された名前で行う
-                alert(`「${name}」を追加しました。\nsoundフォルダにファイルを配置してください。`);
-            } else {
-                alert(`「${name}」は既に登録されています。`);
-            }
-        });
-
+        // --- イベントリスナー ---
         window.removeFile = (index) => {
             if (confirm(`ファイル「${appData.files[index]}」をリストから削除しますか？`)) {
                 const fileName = appData.files[index];
@@ -387,6 +373,52 @@
                 saveData();
             }
         };
+
+        function registerFile(fileName) {
+            let name = fileName.trim();
+            if (!name) return;
+        
+            // mp3拡張子のチェックと補完
+            // (入力が 'test.mp3' でも 'test' でも 'test.mp3' になるようにする)
+            if (!name.toLowerCase().endsWith('.mp3')) {
+                name += '.mp3';
+            }
+        
+            if (!appData.files.includes(name)) {
+                appData.files.push(name);
+                saveData();
+                
+                // UIリセット
+                newFileNameInput.value = '';
+                filePicker.value = ''; // 同じファイルを再選択できるようにリセット
+                
+                // 成功メッセージ（手動配置の注意喚起を含む）
+                alert(`「${name}」をリストに追加しました。\n\n【重要】\n実際に再生するには、このファイルを\n「sound」フォルダの中に置いてください。`);
+            } else {
+                alert(`「${name}」は既に登録されています。`);
+            }
+        }
+
+        // --- イベントリスナー ---
+
+        // 1. 既存の「追加」ボタン
+        addFileBtn.addEventListener('click', () => {
+            registerFile(newFileNameInput.value);
+        });
+
+        // 2. 「参照」ボタンクリック → ファイル選択ダイアログを開く
+        browseBtn.addEventListener('click', () => {
+            filePicker.click();
+        });
+
+        // 3. ファイルが選択されたら → 名前を取得して登録
+        filePicker.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                // file.name には "bgm01.mp3" のようなファイル名が入っている
+                registerFile(file.name);
+            }
+        });
 
         // 2. グループ管理
         function renderGroupSelects() {
@@ -412,6 +444,7 @@
             if (currentEditVal && appData.groups[currentEditVal]) editGroupSelect.value = currentEditVal;
         }
 
+        // --- イベントリスナー ---
         createGroupBtn.addEventListener('click', () => {
             const name = newGroupNameInput.value.trim();
             if (name) {
