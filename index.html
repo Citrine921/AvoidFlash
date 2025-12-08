@@ -170,7 +170,7 @@
 
             <div class="control-group">
                 <details>
-                    <summary>▼ 確率詳細設定を開く</summary>
+                    <summary>確率詳細設定を開く</summary>
                     <div style="padding-top: 10px;">
                         <label>確率増加モード</label>
                         <div class="row" style="margin-bottom:10px;">
@@ -237,7 +237,7 @@
                     <div id="groupEditorArea" class="hidden">
                         <label>このグループに含めるファイル:</label>
                         <div class="file-select-area" id="groupFileCheckboxes">
-                            </div>
+                        </div>
                         <button id="saveGroupConfigBtn" class="btn-save">グループ内容を保存</button>
                     </div>
                 </div>
@@ -266,11 +266,11 @@
          * ============================================================
          */
         const defaultData = {
-            files: ["beep.mp3", "click.mp3", "wind.mp3", "water.mp3"],
+            files: ["剣で斬る1.mp3", "剣で斬る2.mp3", "剣で斬る3.mp3", "剣で斬る4.mp3"],
             groups: [
-                { name: "全て", files: ["beep.mp3", "click.mp3", "wind.mp3", "water.mp3"] },
-                { name: "効果音", files: ["beep.mp3", "click.mp3"] },
-                { name: "環境音", files: ["wind.mp3", "water.mp3"] }
+                { name: "全て", files: ["剣で斬る1.mp3","剣で斬る2.mp3", "剣で斬る3.mp3", "剣で斬る4.mp3"] },
+                { name: "デュエリスト", files: ["剣で斬る1.mp3","剣で斬る2.mp3"] },
+                { name: "イニシエーター", files: ["剣で斬る3.mp3", "剣で斬る4.mp3"] }
             ]
         };
 
@@ -361,7 +361,7 @@
             let name = newFileNameInput.value.trim();
             if (!name) return;
 
-            // 【追加機能】mp3拡張子の自動補完
+            // mp3拡張子の自動補完
             if (!name.toLowerCase().endsWith('.mp3')) {
                 name += '.mp3';
             }
