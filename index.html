@@ -269,11 +269,15 @@
          * ============================================================
          */
         const defaultData = {
-            files: ["剣で斬る1.mp3", "剣で斬る2.mp3", "剣で斬る3.mp3", "剣で斬る4.mp3"],
+            files: ["breach.mp3", "kayo.mp3", "phoenix.mp3", "skye.mp3", "yoru.mp3"],
             groups: [
                 { name: "全て", files: ["剣で斬る1.mp3","剣で斬る2.mp3", "剣で斬る3.mp3", "剣で斬る4.mp3"] },
-                { name: "デュエリスト", files: ["剣で斬る1.mp3","剣で斬る2.mp3"] },
-                { name: "イニシエーター", files: ["剣で斬る3.mp3", "剣で斬る4.mp3"] }
+                { name: "イニシエーター", files: ["breach.mp3", "kayo.mp3", "phoenix.mp3", "skye.mp3", "yoru.mp3"] },
+                { name: "breach", files: ["breach.mp3"] },
+                { name: "kayo", files: ["kayo.mp3"] },
+                { name: "phoenix", files: ["phoenix.mp3"] },
+                { name: "skye", files: ["skye.mp3"] },
+                { name: "yoru", files: ["yoru.mp3"] }
             ]
         };
 
@@ -636,7 +640,7 @@
             if (currentProbability > 100) currentProbability = 100;
         }
 
-        function playSound() {
+        function playSound(onEndedCallback) {
             const groupIdx = mainGroupSelect.value;
             const fileList = appData.groups[groupIdx].files;
             
@@ -672,7 +676,7 @@
             audio.volume = parseFloat(volumeRange.value);
             
             audio.addEventListener('ended', () => {
-                if(onEndedCallback) onEndedCallback();
+                if(onEndedCallback && typeof onEndedCallback === 'function') onEndedCallback();
             });
 
             // エラー時の対策（ファイルがない場合など永遠に止まるのを防ぐ）
