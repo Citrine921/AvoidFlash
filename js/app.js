@@ -11,7 +11,12 @@ class RandomSoundPlayer {
             groups: [
                 { name: "全て", files: ["breach.mp3", "kayo.mp3", "phoenix.mp3", "skye.mp3", "yoru.mp3"] },
                 { name: "イニシエーター", files: ["breach.mp3", "kayo.mp3", "skye.mp3"] },
-                { name: "デュエリスト", files: ["phoenix.mp3", "yoru.mp3"] }
+                { name: "デュエリスト", files: ["phoenix.mp3", "yoru.mp3"] },
+                { name: "breach", files: ["breach.mp3"] },
+                { name: "kayo", files: ["kayo.mp3"] },
+                { name: "phoenix", files: ["phoenix.mp3"] },
+                { name: "skye", files: ["skye.mp3"] },
+                { name: "yoru", files: ["yoru.mp3"] }
             ]
         };
         this.appData = { files: [], groups: [] };
