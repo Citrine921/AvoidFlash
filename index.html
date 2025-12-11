@@ -4,137 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ランダムサウンド再生システム (Auto MP3)</title>
-    <style>
-        /* --- 基本的なスタイル設定 --- */
-        body {
-            font-family: "Helvetica Neue", Arial, sans-serif;
-            background-color: #222;
-            color: #eee;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-            margin: 0;
-        }
-
-        h1 { margin-bottom: 20px; font-size: 1.5rem; }
-
-        /* --- レイアウト --- */
-        .container {
-            width: 100%;
-            max-width: 600px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .card {
-            background-color: #333;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-        }
-
-        /* --- 共通コンポーネント --- */
-        h2 { font-size: 1.1rem; border-bottom: 1px solid #555; padding-bottom: 5px; margin-top: 0; }
-        
-        .control-group { margin-bottom: 15px; }
-        
-        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9rem; }
-        
-        select, input[type="text"], input[type="range"], input[type="number"] {
-            width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-            background: #444;
-            color: #fff;
-            border: 1px solid #555;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        button {
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            color: white;
-            transition: opacity 0.2s;
-        }
-        button:hover { opacity: 0.8; }
-        button:disabled { background-color: #555 !important; cursor: not-allowed; }
-
-        /* --- プレイヤー操作部 --- */
-        .btn-play { background-color: #28a745; width: 48%; }
-        .btn-stop { background-color: #dc3545; width: 48%; }
-        .player-buttons { display: flex; justify-content: space-between; margin-top: 20px; }
-        
-        .status-box {
-            margin-top: 15px;
-            padding: 10px;
-            background: #222;
-            border-radius: 5px;
-            font-family: monospace;
-            text-align: center;
-            color: #00ffcc;
-        }
-
-        /* --- 設定エリア --- */
-        .settings-area {
-            border: 1px solid #555;
-            padding: 15px;
-            border-radius: 8px;
-            background: #2a2a2a;
-        }
-
-        .list-container {
-            max-height: 150px;
-            overflow-y: auto;
-            background: #222;
-            border: 1px solid #444;
-            padding: 5px;
-            margin-bottom: 10px;
-        }
-        .list-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 5px;
-            border-bottom: 1px solid #333;
-            font-size: 0.9rem;
-        }
-        .list-item:last-child { border-bottom: none; }
-        .btn-sm { padding: 4px 8px; font-size: 0.8rem; background: #666; }
-        .btn-add { background: #007bff; width: 100%; margin-top: 5px; }
-        .btn-save { background: #17a2b8; width: 100%; margin-top: 10px; }
-        
-        .file-select-area {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 5px;
-        }
-        .file-checkbox {
-            background: #444;
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            user-select: none;
-        }
-        .file-checkbox input { margin-right: 5px; }
-        .file-checkbox.checked { background: #0056b3; }
-
-        details { margin-bottom: 10px; }
-        summary { cursor: pointer; color: #aaa; font-size: 0.9rem; outline: none; }
-        summary:hover { color: #fff; }
-
-        .row { display: flex; gap: 10px; }
-        .col { flex: 1; }
-        .hidden { display: none; }
-        .small-note { font-size: 0.75rem; color: #aaa; margin-top: 2px; }
-
-    </style>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
@@ -146,11 +16,11 @@
             <h2>再生コントロール</h2>
             
             <div class="control-group">
-                <label>再生グループ</label>
+                <label for="mainGroupSelect">再生グループ</label>
                 <select id="mainGroupSelect"></select>
                 
-                <label style="display:flex; align-items:center; margin-top:8px; font-weight:normal;">
-                    <input type="checkbox" id="reduceRepeat" checked style="width:auto; margin-right:5px;">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="reduceRepeat" checked>
                     前回と同じ音の確率を下げる (50%)
                 </label>
             </div>
@@ -171,11 +41,11 @@
             <div class="control-group">
                 <details>
                     <summary>確率詳細設定を開く</summary>
-                    <div style="padding-top: 10px;">
+                    <div class="details-content">
                         <label>確率増加モード</label>
-                        <div class="row" style="margin-bottom:10px;">
-                            <label style="font-weight:normal;"><input type="radio" name="probMode" value="linear" checked> ➕ 等速</label>
-                            <label style="font-weight:normal;"><input type="radio" name="probMode" value="exponential"> 🚀 指数</label>
+                        <div class="radio-group">
+                            <label><input type="radio" name="probMode" value="linear" checked> ➕ 等速</label>
+                            <label><input type="radio" name="probMode" value="exponential"> 🚀 指数</label>
                         </div>
                         <div class="row">
                             <div class="col">
@@ -196,8 +66,8 @@
             </div>
 
             <div class="player-buttons">
-                <button id="startBtn" class="btn-play">開始</button>
-                <button id="stopBtn" class="btn-stop" disabled>停止</button>
+                <button id="startBtn" class="btn btn-play">開始</button>
+                <button id="stopBtn" class="btn btn-stop" disabled>停止</button>
             </div>
 
             <div class="status-box" id="statusDisplay">設定を読み込みました</div>
@@ -211,50 +81,50 @@
                 <div class="settings-area">
                     <div class="list-container" id="fileListContainer">
                         </div>
-                    <div class="row">
+                    <div class="row input-row">
                         <input type="text" id="newFileName" placeholder="例: bell (.mp3は不要)">
-                        <input type="file" id="filePicker" accept=".mp3" style="display:none;">
-                        <button class="btn-sm" id="browseBtn" style="background:#6c757d; width: 60px;" title="ファイルを選択して名前を入力">📂 参照</button>
-                        <button class="btn-sm" id="addFileBtn" style="background:#28a745;">追加</button>
+                        <input type="file" id="filePicker" accept=".mp3" hidden>
+                        <button class="btn btn-sm btn-secondary" id="browseBtn" title="ファイルを選択して名前を入力">📂 参照</button>
+                        <button class="btn btn-sm btn-primary" id="addFileBtn">追加</button>
                     </div>
-                    <div class="small-note">※ 「参照」または入力後「追加」を押してください。ファイル自体は手動で sound フォルダに入れてください。</div>
-                    <div class="small-note">※ 入力後、自動的に .mp3 が付与されます。</div>
+                    <div class="note-text">※ 「参照」または入力後「追加」を押してください。ファイル自体は手動で sound フォルダに入れてください。</div>
+                    <div class="note-text">※ 入力後、自動的に .mp3 が付与されます。</div>
                 </div>
             </details>
 
-            <details style="margin-top:10px;">
+            <details class="mt-10">
                 <summary>🗂️ グループ設定</summary>
                 <div class="settings-area">
                     <div class="control-group">
                         <label>編集するグループを選択 (または新規作成)</label>
                         <div class="row">
                             <select id="editGroupSelect"></select>
-                            <button id="deleteGroupBtn" class="btn-sm" style="background:#dc3545; width:60px;">削除</button>
+                            <button id="deleteGroupBtn" class="btn btn-sm btn-danger">削除</button>
                         </div>
-                        <div class="row" style="margin-top:5px;">
+                        <div class="row mt-5">
                             <input type="text" id="newGroupName" placeholder="新規グループ名">
-                            <button id="createGroupBtn" class="btn-sm" style="background:#007bff; width:60px;">作成</button>
+                            <button id="createGroupBtn" class="btn btn-sm btn-primary">作成</button>
                         </div>
                     </div>
 
                     <div id="groupEditorArea" class="hidden">
                         <label>このグループに含めるファイル:</label>
                         <div class="file-select-area" id="groupFileCheckboxes">
-                        </div>
-                        <button id="saveGroupConfigBtn" class="btn-save">グループ内容を保存</button>
+                            </div>
+                        <button id="saveGroupConfigBtn" class="btn btn-save">グループ内容を保存</button>
                     </div>
                 </div>
             </details>
 
-            <details style="margin-top:10px;">
+            <details class="mt-10">
                 <summary>💾 設定ファイルの保存・読込</summary>
                 <div class="settings-area">
-                    <p style="font-size:0.9rem; margin:0 0 10px;">現在の設定をファイルに保存、または読み込みます。</p>
+                    <p class="desc-text">現在の設定をファイルに保存、または読み込みます。</p>
                     <div class="row">
-                        <button id="exportBtn" class="btn-sm" style="background:#17a2b8; flex:1;">設定をファイルに保存(DL)</button>
-                        <label class="btn-sm" style="background:#6c757d; flex:1; text-align:center; cursor:pointer; margin:0;">
+                        <button id="exportBtn" class="btn btn-sm btn-info flex-1">設定をファイルに保存(DL)</button>
+                        <label class="btn btn-sm btn-secondary flex-1 text-center cursor-pointer">
                             設定ファイルを読込
-                            <input type="file" id="importFile" accept=".json" style="display:none;">
+                            <input type="file" id="importFile" accept=".json" hidden>
                         </label>
                     </div>
                 </div>
@@ -263,448 +133,6 @@
 
     </div>
 
-    <script>
-        /* * ============================================================
-         * 📦 データ構造と初期設定
-         * ============================================================
-         */
-        const defaultData = {
-            files: ["breach.mp3", "kayo.mp3", "phoenix.mp3", "skye.mp3", "yoru.mp3"],
-            groups: [
-                { name: "全て", files: ["breach.mp3", "kayo.mp3", "phoenix.mp3", "skye.mp3", "yoru.mp3"] },
-                { name: "イニシエーター", files: ["breach.mp3", "kayo.mp3", "skye.mp3"] },
-                { name: "デュエリスト", files: ["phoenix.mp3", "yoru.mp3"] },
-                { name: "breach", files: ["breach.mp3"] },
-                { name: "kayo", files: ["kayo.mp3"] },
-                { name: "phoenix", files: ["phoenix.mp3"] },
-                { name: "skye", files: ["skye.mp3"] },
-                { name: "yoru", files: ["yoru.mp3"] }
-            ]
-        };
-
-        let appData = { files: [], groups: [] };
-
-        /* * ============================================================
-         * 🔧 DOM要素
-         * ============================================================
-         */
-        const startBtn = document.getElementById('startBtn');
-        const stopBtn = document.getElementById('stopBtn');
-        const statusDisplay = document.getElementById('statusDisplay');
-        const mainGroupSelect = document.getElementById('mainGroupSelect');
-        const reduceRepeatCheck = document.getElementById('reduceRepeat');
-        const volumeRange = document.getElementById('volumeRange');
-        const intervalRange = document.getElementById('intervalRange');
-        
-        const fileListContainer = document.getElementById('fileListContainer');
-        const newFileNameInput = document.getElementById('newFileName');
-        const addFileBtn = document.getElementById('addFileBtn');
-        const filePicker = document.getElementById('filePicker');
-        const browseBtn = document.getElementById('browseBtn');
-        
-        const editGroupSelect = document.getElementById('editGroupSelect');
-        const newGroupNameInput = document.getElementById('newGroupName');
-        const createGroupBtn = document.getElementById('createGroupBtn');
-        const deleteGroupBtn = document.getElementById('deleteGroupBtn');
-        const groupEditorArea = document.getElementById('groupEditorArea');
-        const groupFileCheckboxes = document.getElementById('groupFileCheckboxes');
-        const saveGroupConfigBtn = document.getElementById('saveGroupConfigBtn');
-        
-        const exportBtn = document.getElementById('exportBtn');
-        const importFile = document.getElementById('importFile');
-
-        const initProbInput = document.getElementById('initProb');
-        const stepProbInput = document.getElementById('stepProb');
-        const multiProbInput = document.getElementById('multiProb');
-        const probModeRadios = document.getElementsByName('probMode');
-
-        let isRunning = false;
-        let timerId = null;
-        let currentProbability = 0;
-        let lastPlayedFile = null;
-
-        /* * ============================================================
-         * 💾 データのロード・保存
-         * ============================================================
-         */
-        function initApp() {
-            const savedData = localStorage.getItem('soundPlayerConfig');
-            if (savedData) {
-                appData = JSON.parse(savedData);
-            } else {
-                appData = JSON.parse(JSON.stringify(defaultData)); 
-            }
-            refreshAllUI();
-        }
-
-        function saveData() {
-            localStorage.setItem('soundPlayerConfig', JSON.stringify(appData));
-            refreshAllUI();
-        }
-
-        function refreshAllUI() {
-            renderFileList();
-            renderGroupSelects();
-            renderGroupEditor();
-        }
-
-        /* * ============================================================
-         * 🖥️ UI操作ロジック
-         * ============================================================
-         */
-
-        // 1. ファイル管理
-        function renderFileList() {
-            fileListContainer.innerHTML = '';
-            appData.files.forEach((file, index) => {
-                const div = document.createElement('div');
-                div.className = 'list-item';
-                div.innerHTML = `
-                    <span>${file}</span>
-                    <button class="btn-sm" style="background:#dc3545;" onclick="removeFile(${index})">削除</button>
-                `;
-                fileListContainer.appendChild(div);
-            });
-        }
-
-        // --- イベントリスナー ---
-        window.removeFile = (index) => {
-            if (confirm(`ファイル「${appData.files[index]}」をリストから削除しますか？`)) {
-                const fileName = appData.files[index];
-                appData.groups.forEach(g => {
-                    g.files = g.files.filter(f => f !== fileName);
-                });
-                appData.files.splice(index, 1);
-                saveData();
-            }
-        };
-
-        function registerFile(fileName) {
-            let name = fileName.trim();
-            if (!name) return;
-        
-            // mp3拡張子のチェックと補完
-            // (入力が 'test.mp3' でも 'test' でも 'test.mp3' になるようにする)
-            if (!name.toLowerCase().endsWith('.mp3')) {
-                name += '.mp3';
-            }
-        
-            if (!appData.files.includes(name)) {
-                appData.files.push(name);
-                saveData();
-                
-                // UIリセット
-                newFileNameInput.value = '';
-                filePicker.value = ''; // 同じファイルを再選択できるようにリセット
-                
-                // 成功メッセージ（手動配置の注意喚起を含む）
-                alert(`「${name}」をリストに追加しました。\n\n【重要】\n実際に再生するには、このファイルを\n「sound」フォルダの中に置いてください。`);
-            } else {
-                alert(`「${name}」は既に登録されています。`);
-            }
-        }
-
-        // --- イベントリスナー ---
-
-        // 1. 既存の「追加」ボタン
-        addFileBtn.addEventListener('click', () => {
-            registerFile(newFileNameInput.value);
-        });
-
-        // 2. 「参照」ボタンクリック → ファイル選択ダイアログを開く
-        browseBtn.addEventListener('click', () => {
-            filePicker.click();
-        });
-
-        // 3. ファイルが選択されたら → 名前を取得して登録
-        filePicker.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                // file.name には "bgm01.mp3" のようなファイル名が入っている
-                registerFile(file.name);
-            }
-        });
-
-        // 2. グループ管理
-        function renderGroupSelects() {
-            const currentMainVal = mainGroupSelect.value;
-            const currentEditVal = editGroupSelect.value;
-
-            mainGroupSelect.innerHTML = '';
-            editGroupSelect.innerHTML = '<option value="">-- グループを選択 --</option>';
-
-            appData.groups.forEach((group, index) => {
-                const op1 = document.createElement('option');
-                op1.value = index;
-                op1.textContent = `${group.name} (${group.files.length}個)`;
-                mainGroupSelect.appendChild(op1);
-
-                const op2 = document.createElement('option');
-                op2.value = index;
-                op2.textContent = group.name;
-                editGroupSelect.appendChild(op2);
-            });
-
-            if (currentMainVal && appData.groups[currentMainVal]) mainGroupSelect.value = currentMainVal;
-            if (currentEditVal && appData.groups[currentEditVal]) editGroupSelect.value = currentEditVal;
-        }
-
-        // --- イベントリスナー ---
-        createGroupBtn.addEventListener('click', () => {
-            const name = newGroupNameInput.value.trim();
-            if (name) {
-                appData.groups.push({ name: name, files: [] });
-                newGroupNameInput.value = '';
-                saveData();
-                editGroupSelect.value = appData.groups.length - 1;
-                renderGroupEditor();
-            }
-        });
-
-        deleteGroupBtn.addEventListener('click', () => {
-            const idx = editGroupSelect.value;
-            if (idx === "") return;
-            if (confirm("このグループ設定を削除しますか？")) {
-                appData.groups.splice(idx, 1);
-                saveData();
-                groupEditorArea.classList.add('hidden');
-            }
-        });
-
-        editGroupSelect.addEventListener('change', renderGroupEditor);
-
-        function renderGroupEditor() {
-            const idx = editGroupSelect.value;
-            if (idx === "") {
-                groupEditorArea.classList.add('hidden');
-                return;
-            }
-            groupEditorArea.classList.remove('hidden');
-            
-            const targetGroup = appData.groups[idx];
-            groupFileCheckboxes.innerHTML = '';
-
-            appData.files.forEach(fileName => {
-                const label = document.createElement('label');
-                label.className = 'file-checkbox';
-                const isChecked = targetGroup.files.includes(fileName);
-                if (isChecked) label.classList.add('checked');
-
-                label.innerHTML = `<input type="checkbox" value="${fileName}" ${isChecked ? 'checked' : ''}> ${fileName}`;
-                
-                label.querySelector('input').addEventListener('change', (e) => {
-                    if (e.target.checked) label.classList.add('checked');
-                    else label.classList.remove('checked');
-                });
-
-                groupFileCheckboxes.appendChild(label);
-            });
-        }
-
-        saveGroupConfigBtn.addEventListener('click', () => {
-            const idx = editGroupSelect.value;
-            if (idx === "") return;
-
-            const checkboxes = groupFileCheckboxes.querySelectorAll('input[type="checkbox"]');
-            const selectedFiles = [];
-            checkboxes.forEach(cb => {
-                if (cb.checked) selectedFiles.push(cb.value);
-            });
-
-            appData.groups[idx].files = selectedFiles;
-            saveData();
-            alert("グループ内容を更新しました。");
-        });
-
-        // 3. 設定ファイル入出力
-        exportBtn.addEventListener('click', () => {
-            const blob = new Blob([JSON.stringify(appData, null, 2)], {type: 'application/json'});
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'sound_player_config.json';
-            a.click();
-            URL.revokeObjectURL(url);
-        });
-
-        importFile.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                try {
-                    const loaded = JSON.parse(e.target.result);
-                    if (loaded.files && loaded.groups) {
-                        appData = loaded;
-                        saveData();
-                        alert("設定ファイルを読み込みました。");
-                    } else {
-                        alert("無効な設定ファイル形式です。");
-                    }
-                } catch (err) {
-                    alert("読み込みエラー: " + err);
-                }
-            };
-            reader.readAsText(file);
-            e.target.value = '';
-        });
-
-        /* * ============================================================
-         * ▶️ 再生プレイヤーロジック
-         * ============================================================
-         */
-        document.getElementById('volDisplay').textContent = (volumeRange.value * 100).toFixed(0) + "%";
-        document.getElementById('intervalDisplay').textContent = intervalRange.value + "秒";
-        
-        volumeRange.addEventListener('input', (e) => {
-            document.getElementById('volDisplay').textContent = (e.target.value * 100).toFixed(0) + "%";
-        });
-        intervalRange.addEventListener('input', (e) => {
-            document.getElementById('intervalDisplay').textContent = e.target.value + "秒";
-        });
-
-        probModeRadios.forEach(r => {
-            r.addEventListener('change', () => {
-                if (r.value === 'linear') {
-                    document.getElementById('linearSetting').classList.remove('hidden');
-                    document.getElementById('exponentialSetting').classList.add('hidden');
-                } else {
-                    document.getElementById('linearSetting').classList.add('hidden');
-                    document.getElementById('exponentialSetting').classList.remove('hidden');
-                }
-            });
-        });
-
-        startBtn.addEventListener('click', () => {
-            if (isRunning) return;
-            
-            const groupIdx = mainGroupSelect.value;
-            const targetFiles = appData.groups[groupIdx]?.files;
-
-            if (!targetFiles || targetFiles.length === 0) {
-                alert("選択されたグループにはファイルが登録されていません。\n設定エリアでファイルを割り当ててください。");
-                return;
-            }
-
-            isRunning = true;
-            toggleButtons(true);
-            currentProbability = parseFloat(initProbInput.value);
-            lastPlayedFile = null;
-            
-            updateStatus("開始: 判定待ち...");
-            const wait = parseFloat(intervalRange.value) * 1000;
-            timerId = setTimeout(processLoop, wait);
-        });
-
-        stopBtn.addEventListener('click', () => {
-            if (!isRunning) return;
-            isRunning = false;
-            clearTimeout(timerId);
-            toggleButtons(false);
-            updateStatus("停止しました");
-        });
-
-        function processLoop() {
-            if (!isRunning) return;
-
-            const dice = Math.random() * 100;
-            if (dice < currentProbability) {
-                updateStatus("♪ 再生中 (判定停止)");
-                playSound(() => {
-                    // 再生終了後のコールバック
-                    if (!isRunning) return; // 停止されていたら何もしない
-                    currentProbability = parseFloat(initProbInput.value);
-                    
-                    // 少し間隔を空けて再開したい場合（例えば再生終了後1秒待つ）
-                    timerId = setTimeout(() => {
-                        updateStatus("判定再開");
-                        processLoop();
-                    }, 500); 
-                });
-            } else {
-                increaseProbability();
-                updateStatus(`... (次: ${currentProbability.toFixed(1)}%)`);
-                
-                const base = parseFloat(intervalRange.value) * 1000;
-                const jitter = Math.random() * 500;
-                timerId = setTimeout(processLoop, base + jitter);
-            }
-        }
-
-        function increaseProbability() {
-            const mode = document.querySelector('input[name="probMode"]:checked').value;
-            if (mode === 'linear') {
-                currentProbability += parseFloat(stepProbInput.value);
-            } else {
-                currentProbability *= parseFloat(multiProbInput.value);
-            }
-            if (currentProbability > 100) currentProbability = 100;
-        }
-
-        function playSound(onEndedCallback) {
-            const groupIdx = mainGroupSelect.value;
-            const fileList = appData.groups[groupIdx].files;
-            
-            if (fileList.length === 0) {
-                if(onEndedCallback) onEndedCallback(); // ファイルがない場合は即次へ
-                return;
-            };
-
-            let selectedFile;
-            const useReduce = reduceRepeatCheck.checked;
-
-            if (useReduce && lastPlayedFile && fileList.includes(lastPlayedFile) && fileList.length > 1) {
-                const weights = fileList.map(f => (f === lastPlayedFile) ? 0.5 : 1.0);
-                const totalW = weights.reduce((a, b) => a + b, 0);
-                let r = Math.random() * totalW;
-                
-                for (let i = 0; i < fileList.length; i++) {
-                    if (r < weights[i]) {
-                        selectedFile = fileList[i];
-                        break;
-                    }
-                    r -= weights[i];
-                }
-            } else {
-                const rIdx = Math.floor(Math.random() * fileList.length);
-                selectedFile = fileList[rIdx];
-            }
-
-            if (!selectedFile) selectedFile = fileList[0];
-            lastPlayedFile = selectedFile;
-
-            const audio = new Audio(`./sound/${selectedFile}`);
-            audio.volume = parseFloat(volumeRange.value);
-            
-            audio.addEventListener('ended', () => {
-                if(onEndedCallback && typeof onEndedCallback === 'function') onEndedCallback();
-            });
-
-            // エラー時の対策（ファイルがない場合など永遠に止まるのを防ぐ）
-            audio.addEventListener('error', (e) => {
-                console.error("再生エラー:", e);
-                updateStatus(`エラー: ${selectedFile} が見つかりません`);
-                // エラー時も少し待って次へ進める
-                setTimeout(() => {
-                    if(onEndedCallback) onEndedCallback();
-                }, 1000); 
-            });
-
-            audio.play().catch(e => {
-                console.error("再生開始エラー", e);
-                if(onEndedCallback) onEndedCallback();
-            });
-        }
-
-        function toggleButtons(running) {
-            startBtn.disabled = running;
-            stopBtn.disabled = !running;
-        }
-        function updateStatus(msg) {
-            statusDisplay.textContent = msg;
-        }
-
-        initApp();
-    </script>
+    <script src="js/app.js"></script>
 </body>
 </html>

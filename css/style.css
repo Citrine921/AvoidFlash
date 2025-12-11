@@ -1,0 +1,167 @@
+:root {
+    --bg-color: #222;
+    --card-bg: #333;
+    --input-bg: #444;
+    --text-color: #eee;
+    --border-color: #555;
+    --accent-color: #00ffcc;
+    
+    --btn-primary: #007bff;
+    --btn-success: #28a745;
+    --btn-danger: #dc3545;
+    --btn-info: #17a2b8;
+    --btn-secondary: #6c757d;
+}
+
+body {
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    margin: 0;
+}
+
+h1 { margin-bottom: 20px; font-size: 1.5rem; }
+h2 { font-size: 1.1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 5px; margin-top: 0; }
+
+/* レイアウト */
+.container {
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.card {
+    background-color: var(--card-bg);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+.row { display: flex; gap: 10px; }
+.col { flex: 1; }
+.mt-5 { margin-top: 5px; }
+.mt-10 { margin-top: 10px; }
+.hidden { display: none !important; }
+.flex-1 { flex: 1; }
+.text-center { text-align: center; }
+.cursor-pointer { cursor: pointer; }
+
+/* フォーム要素 */
+.control-group { margin-bottom: 15px; }
+label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9rem; }
+
+select, input[type="text"], input[type="range"], input[type="number"] {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    background: var(--input-bg);
+    color: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.checkbox-label {
+    display: flex; 
+    align-items: center; 
+    margin-top: 8px; 
+    font-weight: normal;
+}
+.checkbox-label input { width: auto; margin-right: 5px; }
+
+.radio-group label {
+    display: inline-block;
+    font-weight: normal;
+    margin-right: 15px;
+}
+
+/* ボタン */
+.btn {
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+    transition: opacity 0.2s;
+}
+.btn:hover { opacity: 0.8; }
+.btn:disabled { background-color: var(--border-color) !important; cursor: not-allowed; }
+
+.btn-sm { padding: 4px 8px; font-size: 0.8rem; }
+.btn-play { background-color: var(--btn-success); width: 48%; }
+.btn-stop { background-color: var(--btn-danger); width: 48%; }
+.btn-primary { background-color: var(--btn-primary); }
+.btn-secondary { background-color: var(--btn-secondary); }
+.btn-danger { background-color: var(--btn-danger); }
+.btn-info { background-color: var(--btn-info); }
+.btn-save { background-color: var(--btn-info); width: 100%; margin-top: 10px; }
+
+.player-buttons { display: flex; justify-content: space-between; margin-top: 20px; }
+
+/* ステータス表示 */
+.status-box {
+    margin-top: 15px;
+    padding: 10px;
+    background: #222;
+    border-radius: 5px;
+    font-family: monospace;
+    text-align: center;
+    color: var(--accent-color);
+}
+
+/* 設定エリア */
+.settings-area {
+    border: 1px solid var(--border-color);
+    padding: 15px;
+    border-radius: 8px;
+    background: #2a2a2a;
+}
+.details-content { padding-top: 10px; }
+
+/* リスト・チェックボックス */
+.list-container {
+    max-height: 150px;
+    overflow-y: auto;
+    background: #222;
+    border: 1px solid var(--input-bg);
+    padding: 5px;
+    margin-bottom: 10px;
+}
+.list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px;
+    border-bottom: 1px solid var(--card-bg);
+    font-size: 0.9rem;
+}
+.list-item:last-child { border-bottom: none; }
+
+.file-select-area {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 5px;
+}
+.file-checkbox {
+    background: var(--input-bg);
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    user-select: none;
+}
+.file-checkbox input { margin-right: 5px; }
+.file-checkbox.checked { background: #0056b3; }
+
+summary { cursor: pointer; color: #aaa; font-size: 0.9rem; outline: none; }
+summary:hover { color: #fff; }
+
+.note-text { font-size: 0.75rem; color: #aaa; margin-top: 2px; }
+.desc-text { font-size: 0.9rem; margin: 0 0 10px; }
