@@ -250,6 +250,10 @@ class RandomSoundPlayer {
 
         if (!this.appData.files.includes(name)) {
             this.appData.files.push(name);
+            const allGroup = this.appData.groups.find(g => g.name === "全て");
+            if (allGroup) {
+                allGroup.files.push(name);
+            }
             this.saveData();
             this.dom.newFileName.value = '';
             this.dom.filePicker.value = ''; 
